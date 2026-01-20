@@ -25,6 +25,8 @@ twilio_client = Client(TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, TWILIO_ACCOUNT
 
 # Track last SMS sent time
 last_sms_time = 0
+# Track last print time for results
+last_print_time = 0
 
 def send_sms_alert(missing_categories):
     """Send SMS alert for missing milk categories with cooldown."""
@@ -34,7 +36,6 @@ def send_sms_alert(missing_categories):
 
     # Check if cooldown period has passed
     if current_time - last_sms_time < SMS_COOLDOWN_SECONDS:
-        print(f"SMS cooldown active. {SMS_COOLDOWN_SECONDS - (current_time - last_sms_time):.1f}s remaining")
         return
 
     # Format missing categories for SMS
@@ -55,6 +56,22 @@ def send_sms_alert(missing_categories):
         )
         last_sms_time = current_time
         print(f"SMS sent successfully! SID: {message.sid}")
+        print(f"Status: {message.status}")
+
+        # Fetch updated message status after a moment
+        import time as time_module
+        time_module.sleep(2)
+        updated_message = twilio_client.messages(message.sid).fetch()
+        print(f"Updated Status: {updated_message.status}")
+        if updated_message.error_code:
+            print(f"Error Code: {updated_message.error_code}")
+            print(f"Error Message: {updated_message.error_message}")
+            # Twilio error 30032 typically means:
+            # - Trial account trying to send to unverified number
+            # - From number not SMS-capable
+            # Check: https://www.twilio.com/docs/api/errors/30032
+            print(f"From: {TWILIO_FROM_NUMBER}, To: {TWILIO_TO_NUMBER}")
+            print(f"Is {TWILIO_TO_NUMBER} verified in your Twilio console?")
     except Exception as e:
         print(f"Error sending SMS: {e}")
 
@@ -134,21 +151,25 @@ def my_sink(result, video_frame):
                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
 
             # Send SMS alert
-            send_sms_alert(missing)
+            #send_sms_alert(missing)
 
         # Display the image
         cv2.imshow("Workflow Image", display_image)
         cv2.waitKey(1)
 
-    # Do something with the predictions of each frame
-    print(result)
+    # Print results every 2 seconds
+    global last_print_time
+    current_time = time.time()
+    if current_time - last_print_time >= 2:
+        print(result)
+        last_print_time = current_time
 
 
 # 2. Initialize a pipeline object
 pipeline = InferencePipeline.init_with_workflow(
     api_key=os.environ.get("ROBOFLOW_API_KEY"),
     workspace_name="edss",
-    workflow_id="count-milk",
+    workflow_id="count-milk-alerts",
     video_reference=0, # Path to video, device id (int, usually 0 for built in webcams), or RTSP stream url
     max_fps=10,
     on_prediction=my_sink
