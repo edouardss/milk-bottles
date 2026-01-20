@@ -33,6 +33,5 @@ echo "Installing requirements..."
 pip install -q -r requirements.txt
 
 # Run the Flask app
-echo "Starting Flask webapp..."
-echo "Access the app at: http://localhost:5050 or http://127.0.0.1:5050"
+echo "Starting Flask webapp at http://localhost:5050"
 python app.py
