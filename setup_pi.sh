@@ -34,6 +34,7 @@ sudo apt upgrade -y
 
 echo ""
 echo "Step 2: Installing system dependencies (not Python packages)..."
+echo "Note: apt will skip packages that are already installed"
 sudo apt install -y \
     python3-pip \
     python3-dev \

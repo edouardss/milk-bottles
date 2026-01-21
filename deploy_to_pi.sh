@@ -98,6 +98,31 @@ else
 fi
 
 echo ""
+echo "Step 5: Installing ngrok (optional)..."
+read -p "Install ngrok for public URL access? (y/n) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Installing ngrok on Pi..."
+    ssh ${PI_USER}@${PI_HOST} "cd ${PROJECT_DIR} && chmod +x install_ngrok.sh && ./install_ngrok.sh"
+
+    if [ $? -eq 0 ]; then
+        echo "✓ ngrok installed successfully"
+
+        echo ""
+        read -p "Set up ngrok as auto-start service? (y/n) " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            ssh ${PI_USER}@${PI_HOST} "cd ${PROJECT_DIR} && chmod +x install_ngrok_service.sh && sudo ./install_ngrok_service.sh"
+            echo "✓ ngrok service configured"
+        fi
+    else
+        echo "⚠ ngrok installation failed (non-critical)"
+    fi
+else
+    echo "Skipping ngrok installation"
+fi
+
+echo ""
 echo "======================================================"
 echo "Deployment Complete! ✓"
 echo "======================================================"
@@ -110,20 +135,24 @@ echo ""
 echo "2. Navigate to the project:"
 echo "   cd ${PROJECT_DIR}"
 echo ""
-echo "3. Activate virtual environment:"
-echo "   source ${VENV_NAME}/bin/activate"
+echo "3. Start the application:"
+echo "   ${VENV_NAME}/bin/python app_pi.py"
 echo ""
-echo "4. Start the application:"
-echo "   python app_pi.py"
-echo ""
-echo "5. Access the dashboard:"
-echo "   http://${PI_HOST}:5050"
+echo "4. Access the dashboard:"
+echo "   Local:  http://${PI_HOST}:5050"
+if command -v curl &> /dev/null; then
+    NGROK_RUNNING=$(ssh ${PI_USER}@${PI_HOST} "curl -s http://localhost:4040/api/tunnels 2>/dev/null" | grep -o '"public_url":"[^"]*"' | grep https | cut -d'"' -f4 | head -1)
+    if [ -n "$NGROK_RUNNING" ]; then
+        echo "   Public: $NGROK_RUNNING"
+    fi
+fi
 echo ""
 echo "======================================================"
 echo ""
-echo "Optional: Set up auto-start service"
+echo "Optional: Set up auto-start services"
 echo "   ssh ${PI_USER}@${PI_HOST}"
 echo "   cd ${PROJECT_DIR}"
-echo "   sudo ./install_service.sh"
+echo "   sudo ./install_service.sh        # App auto-start"
+echo "   sudo ./install_ngrok_service.sh  # ngrok auto-start"
 echo ""
 echo "======================================================"
