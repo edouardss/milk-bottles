@@ -33,12 +33,11 @@ sudo apt update
 sudo apt upgrade -y
 
 echo ""
-echo "Step 2: Installing system dependencies..."
+echo "Step 2: Installing system dependencies (not Python packages)..."
 sudo apt install -y \
     python3-pip \
     python3-dev \
     python3-venv \
-    python3-opencv \
     libatlas-base-dev \
     libjpeg-dev \
     libpng-dev \
@@ -53,7 +52,6 @@ sudo apt install -y \
     libcanberra-gtk3-module \
     libhdf5-dev \
     libhdf5-serial-dev \
-    libatlas-base-dev \
     libjasper-dev \
     libqt5gui5 \
     libqt5webkit5 \
