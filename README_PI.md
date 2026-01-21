@@ -1,4 +1,4 @@
-# Milk Bottle Monitoring - Raspberry Pi 4 Setup
+# Milk Bottle Monitoring - Raspberry Pi 4 Deployment
 
 This version is optimized for Raspberry Pi 4 with a USB webcam, using Roboflow's serverless cloud inference to offload the heavy AI processing.
 
@@ -9,95 +9,150 @@ This version is optimized for Raspberry Pi 4 with a USB webcam, using Roboflow's
 - **MicroSD Card** (32GB+ recommended)
 - **Power Supply** (Official Raspberry Pi power adapter)
 - **Cooling** (Heatsinks or fan for continuous operation)
+- **Network Connection** (WiFi or Ethernet)
 
-## Quick Start
+## Quick Deployment
 
-### 1. Transfer Files to Raspberry Pi
+### From Your Mac/PC
 
-Copy these files to your Raspberry Pi:
+1. **Clone and push this repository to GitHub** (if not already done)
+
+2. **Run the deployment script:**
+   ```bash
+   ./deploy_to_pi.sh
+   ```
+
+This single command will:
+- ✓ Clone the repository to your Raspberry Pi
+- ✓ Copy your `config.env` (if you choose)
+- ✓ Install all system dependencies
+- ✓ Create a Python virtual environment
+- ✓ Install Python packages
+- ✓ Test camera access
+- ✓ Set up configuration
+
+### What the Deployment Does
+
+The `deploy_to_pi.sh` script:
+1. Tests SSH connection to `edsspi.local`
+2. Clones repository from GitHub to `~/milk-bottles`
+3. Optionally copies your local `config.env`
+4. Runs `setup_pi.sh` on the Pi to install everything
+5. Creates isolated virtual environment at `~/milk-bottles/venv`
+
+## Manual Setup (if needed)
+
+If you prefer to set up manually:
+
+### 1. SSH into Your Pi
 ```bash
-# From your main computer, use scp:
-scp app_pi.py requirements_pi.txt setup_pi.sh pi@<raspberry-pi-ip>:~/milk-monitor/
-scp -r templates pi@<raspberry-pi-ip>:~/milk-monitor/
+ssh edss@edsspi.local
 ```
 
-### 2. Run Setup Script
-
-SSH into your Raspberry Pi and run:
+### 2. Clone Repository
 ```bash
-cd ~/milk-monitor
+cd ~
+git clone git@github.com:edouardss/milk-bottles.git
+cd milk-bottles
+```
+
+### 3. Create config.env
+```bash
+cp config.env.example config.env
+nano config.env
+# Add your ROBOFLOW_API_KEY
+```
+
+### 4. Run Setup
+```bash
 chmod +x setup_pi.sh
 ./setup_pi.sh
 ```
 
-This script will:
-- Update system packages
-- Install required system libraries
-- Install Python dependencies
-- Test camera access
-- Create config.env template
+This installs all dependencies and creates a virtual environment.
 
-### 3. Configure API Key
+## Running the Application
 
-Edit the config.env file with your Roboflow API key:
+### Option 1: Manual Start
 ```bash
-nano config.env
+cd ~/milk-bottles
+source venv/bin/activate
+python app_pi.py
 ```
 
-Add your API key:
-```
-ROBOFLOW_API_KEY=your_actual_api_key_here
+### Option 2: Direct Execution
+```bash
+cd ~/milk-bottles
+venv/bin/python app_pi.py
 ```
 
-### 4. Run the Application
+### Option 3: Auto-Start Service (Recommended)
+
+Set up the application to start automatically on boot:
 
 ```bash
-python3 app_pi.py
+cd ~/milk-bottles
+sudo ./install_service.sh
 ```
 
-The application will start and display:
-```
-======================================
-Raspberry Pi 4 Milk Bottle Monitoring System
-======================================
-Configuration:
-  - Inference: Roboflow Cloud (serverless)
-  - Camera: USB webcam
-  - Max FPS: 5 (optimized for Pi 4)
-======================================
+Service commands:
+```bash
+sudo systemctl start milk-monitor    # Start
+sudo systemctl stop milk-monitor     # Stop
+sudo systemctl restart milk-monitor  # Restart
+sudo systemctl status milk-monitor   # Check status
+sudo journalctl -u milk-monitor -f   # View logs
 ```
 
-### 5. Access the Dashboard
+## Accessing the Dashboard
 
-From any device on the same network, open a browser and navigate to:
-```
-http://<raspberry-pi-ip>:5050
-```
+From any device on the same network:
+- **http://edsspi.local:5050**
+- **http://[pi-ip-address]:5050**
 
-To find your Raspberry Pi's IP address:
+To find your Pi's IP:
 ```bash
 hostname -I
+```
+
+## Project Structure
+
+```
+~/milk-bottles/
+├── venv/                     # Virtual environment (created by setup)
+├── app_pi.py                 # Main application (Pi optimized)
+├── requirements_pi.txt       # Python dependencies
+├── setup_pi.sh              # Setup script
+├── install_service.sh       # Systemd service installer
+├── config.env               # Configuration (API keys)
+├── config.env.example       # Template
+├── templates/
+│   └── index.html           # Web dashboard
+├── milk_bottle_counts.csv   # Data log (created at runtime)
+└── milk_bottle_alerts.csv   # Alert log (created at runtime)
 ```
 
 ## Key Differences from Desktop Version
 
 ### Optimizations for Raspberry Pi 4
 
-1. **Cloud Inference**: Uses Roboflow's serverless cloud instead of local inference
-   - No need to run local inference server
-   - Significantly reduces CPU/memory usage on Pi
+1. **☁️ Cloud Inference**: Uses Roboflow's serverless cloud
+   - No local inference server needed
+   - Significantly reduces CPU/memory on Pi
    - Requires stable internet connection
 
-2. **Reduced FPS**: Set to 5 FPS (vs 10 FPS on desktop)
-   - Balances responsiveness with Pi's processing capabilities
-   - Reduces network bandwidth usage
+2. **⚡ Performance**: Reduced to 5 FPS (vs 10 FPS)
+   - Balances responsiveness with Pi capabilities
+   - Reduces network bandwidth
 
-3. **Same Features**:
-   - ✓ Live video feed with detection overlays
-   - ✓ Real-time analytics graphs
-   - ✓ Alert tracking and history
-   - ✓ WebSocket updates
-   - ✓ CSV data logging
+3. **📦 Virtual Environment**: Isolated dependencies
+   - Clean separation from system Python
+   - Easy to update or reset
+
+4. **🔄 Auto-Start**: Systemd service support
+   - Starts automatically on boot
+   - Restarts on crashes
+   - Easy monitoring with journalctl
 
 ## Troubleshooting
 
@@ -106,85 +161,81 @@ hostname -I
 Check if camera is recognized:
 ```bash
 ls /dev/video*
+# Should show /dev/video0
 ```
 
-You should see `/dev/video0` (or similar). If not:
-- Check USB connection
-- Try different USB port
-- Test with: `v4l2-ctl --list-devices`
+Test camera:
+```bash
+v4l2-ctl --list-devices
+```
 
 ### Change Camera Device
 
-If your camera is on a different device (e.g., `/dev/video1`), edit `app_pi.py`:
+Edit `app_pi.py` line 320:
 ```python
-# Line 320 - change from:
+# Change from:
 video_reference=0
 
 # To:
 video_reference="/dev/video1"  # or appropriate device
 ```
 
+### Virtual Environment Issues
+
+Recreate the virtual environment:
+```bash
+cd ~/milk-bottles
+rm -rf venv
+./setup_pi.sh
+```
+
+### Network/Inference Issues
+
+Test internet connection:
+```bash
+ping api.roboflow.com
+```
+
+Verify API key in `config.env`:
+```bash
+grep ROBOFLOW_API_KEY config.env
+```
+
 ### Low Performance
 
-If the system is slow:
-1. Reduce FPS further (edit `max_fps=5` to `max_fps=3` in app_pi.py)
-2. Ensure Pi has adequate cooling
-3. Close other applications
-4. Consider using Pi 4 8GB model
-
-### Network Issues
-
-If inference fails:
-- Check internet connection: `ping api.roboflow.com`
-- Verify API key in config.env
-- Check Roboflow account status
+Reduce FPS in `app_pi.py`:
+```python
+max_fps=3  # Change from 5 to 3
+```
 
 ### Permission Errors
 
-If you get camera permission errors:
+Add user to video group:
 ```bash
 sudo usermod -a -G video $USER
-# Then logout and login again
+# Then logout and login
 ```
 
-## Auto-Start on Boot (Optional)
+### Service Won't Start
 
-To run the application automatically when Pi boots:
-
-1. Create systemd service file:
+Check logs:
 ```bash
-sudo nano /etc/systemd/system/milk-monitor.service
+sudo journalctl -u milk-monitor -n 50
 ```
 
-2. Add this content:
-```ini
-[Unit]
-Description=Milk Bottle Monitoring Service
-After=network.target
-
-[Service]
-Type=simple
-User=pi
-WorkingDirectory=/home/pi/milk-monitor
-Environment="PATH=/home/pi/.local/bin:/usr/local/bin:/usr/bin"
-ExecStart=/usr/bin/python3 /home/pi/milk-monitor/app_pi.py
-Restart=always
-RestartSec=10
-
-[Install]
-WantedBy=multi-user.target
-```
-
-3. Enable and start the service:
+Check service status:
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable milk-monitor.service
-sudo systemctl start milk-monitor.service
+sudo systemctl status milk-monitor
 ```
 
-4. Check status:
+## Updating the Application
+
 ```bash
-sudo systemctl status milk-monitor.service
+cd ~/milk-bottles
+git pull
+source venv/bin/activate
+pip install -r requirements_pi.txt
+sudo systemctl restart milk-monitor  # If using service
 ```
 
 ## Performance Expectations
@@ -206,49 +257,40 @@ On Raspberry Pi 4 (4GB):
 ┌─────────────────────────────────┐
 │  Raspberry Pi 4                 │
 │  ┌───────────────────────────┐  │
-│  │  app_pi.py                │  │
-│  │  - Captures frames        │  │
-│  │  - Sends to Roboflow      │◄─┼──► Roboflow Cloud
-│  │  - Receives predictions   │  │    (Serverless Inference)
-│  │  - Renders overlays       │  │
-│  │  - Streams to web         │  │
-│  └───────────────────────────┘  │
-│  ┌───────────────────────────┐  │
-│  │  Flask Web Server         │  │
-│  │  - Video feed             │  │
-│  │  - Analytics dashboard    │  │
-│  │  - Alert tracking         │  │
+│  │  venv/                    │  │
+│  │  └── app_pi.py            │  │
+│  │      - Captures frames    │  │
+│  │      - Sends to cloud     │◄─┼──► Roboflow Cloud
+│  │      - Renders overlays   │  │    (Serverless)
+│  │      - Web dashboard      │  │
 │  └───────────────────────────┘  │
 └─────────────────┬───────────────┘
                   │
                   ▼
          ┌─────────────────┐
-         │  Browser        │
+         │  Web Browser    │
          │  (Any Device)   │
+         │  :5050          │
          └─────────────────┘
 ```
 
-## File Structure
+## Security Notes
 
-```
-milk-monitor/
-├── app_pi.py                 # Main application (Pi optimized)
-├── requirements_pi.txt       # Python dependencies
-├── setup_pi.sh              # Automated setup script
-├── config.env               # Configuration (API keys)
-├── templates/
-│   └── index.html           # Web dashboard
-├── milk_bottle_counts.csv   # Data log (created at runtime)
-└── milk_bottle_alerts.csv   # Alert log (created at runtime)
-```
+- `config.env` contains API keys - keep it secure
+- Dashboard is accessible on local network only
+- For external access, use VPN or ngrok (like your current setup)
 
 ## Support
 
-For issues or questions:
-- Check Roboflow documentation: https://docs.roboflow.com
-- Raspberry Pi forums: https://forums.raspberrypi.com
-- GitHub Issues: (your repo here)
+- Roboflow Docs: https://docs.roboflow.com
+- Raspberry Pi Forums: https://forums.raspberrypi.com
+- GitHub Issues: https://github.com/edouardss/milk-bottles/issues
 
-## License
+## Next Steps
 
-Same as main project
+After deployment:
+1. ✅ Test the dashboard: http://edsspi.local:5050
+2. ✅ Verify camera detection and inference
+3. ✅ Check alerts are working
+4. ✅ Set up auto-start service
+5. ✅ Monitor performance and adjust FPS if needed
