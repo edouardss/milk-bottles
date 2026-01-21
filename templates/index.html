@@ -164,6 +164,7 @@
 
         #alerts-container {
             overflow-x: auto;
+            margin-top: 20px;
         }
 
         #alerts-table {
@@ -264,8 +265,28 @@
         <div id="alerts-tab" class="tab-content">
             <div class="status">
                 <span class="status-indicator"></span>
-                <strong>Alert History (10 second cooldown)</strong>
+                <strong>Alert History (500 second cooldown)</strong>
             </div>
+
+            <div class="stats">
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h3>Total Alerts</h3>
+                    <div class="value" id="total-alerts">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h3>Whole Milk Alerts</h3>
+                    <div class="value" id="whole-alerts">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <h3>1% Milk Alerts</h3>
+                    <div class="value" id="1pct-alerts">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <h3>2% Milk Alerts</h3>
+                    <div class="value" id="2pct-alerts">0</div>
+                </div>
+            </div>
+
             <div id="alerts-container">
                 <table id="alerts-table">
                     <thead>
@@ -412,15 +433,52 @@
         });
 
         // Alerts functions
+        function calculateAlertStats(alerts) {
+            const stats = {
+                total: alerts.length,
+                whole: 0,
+                '1pct': 0,
+                '2pct': 0
+            };
+
+            alerts.forEach(alert => {
+                const categories = alert.missing_categories.toLowerCase();
+                if (categories.includes('whole milk')) {
+                    stats.whole++;
+                }
+                if (categories.includes('1% milk')) {
+                    stats['1pct']++;
+                }
+                if (categories.includes('2% milk')) {
+                    stats['2pct']++;
+                }
+            });
+
+            return stats;
+        }
+
+        function updateAlertStats(stats) {
+            document.getElementById('total-alerts').textContent = stats.total;
+            document.getElementById('whole-alerts').textContent = stats.whole;
+            document.getElementById('1pct-alerts').textContent = stats['1pct'];
+            document.getElementById('2pct-alerts').textContent = stats['2pct'];
+        }
+
         function updateAlertsTable(alerts) {
             const tbody = document.getElementById('alerts-tbody');
             tbody.innerHTML = '';
 
             if (!alerts || alerts.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: #999;">No alerts yet</td></tr>';
+                updateAlertStats({ total: 0, whole: 0, '1pct': 0, '2pct': 0 });
                 return;
             }
 
+            // Update stats
+            const stats = calculateAlertStats(alerts);
+            updateAlertStats(stats);
+
+            // Update table
             alerts.forEach(alert => {
                 const row = document.createElement('tr');
                 row.className = 'alert-row';
@@ -448,6 +506,24 @@
                 <td>${alert.missing_categories}</td>
             `;
             tbody.insertBefore(row, tbody.firstChild);
+
+            // Update stats
+            const totalAlerts = parseInt(document.getElementById('total-alerts').textContent) + 1;
+            document.getElementById('total-alerts').textContent = totalAlerts;
+
+            const categories = alert.missing_categories.toLowerCase();
+            if (categories.includes('whole milk')) {
+                const wholeAlerts = parseInt(document.getElementById('whole-alerts').textContent) + 1;
+                document.getElementById('whole-alerts').textContent = wholeAlerts;
+            }
+            if (categories.includes('1% milk')) {
+                const onePctAlerts = parseInt(document.getElementById('1pct-alerts').textContent) + 1;
+                document.getElementById('1pct-alerts').textContent = onePctAlerts;
+            }
+            if (categories.includes('2% milk')) {
+                const twoPctAlerts = parseInt(document.getElementById('2pct-alerts').textContent) + 1;
+                document.getElementById('2pct-alerts').textContent = twoPctAlerts;
+            }
         }
 
         // Initialize graph on page load

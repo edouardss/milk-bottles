@@ -30,7 +30,7 @@ last_frame = None
 frame_lock = Lock()
 
 # Alert cooldown period (in seconds) - should match Roboflow's SMS cooldown
-ALERT_COOLDOWN_SECONDS = 10
+ALERT_COOLDOWN_SECONDS = 500
 
 # Data storage for plotting (in-memory for past hour)
 data_history = {
