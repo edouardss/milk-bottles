@@ -81,10 +81,20 @@ fi
 echo ""
 echo "Step 4: Activating virtual environment and upgrading pip..."
 source ${VENV_NAME}/bin/activate
+
+# Verify we're in the virtual environment
+if [[ "$VIRTUAL_ENV" != "" ]]; then
+    echo "✓ Virtual environment activated: $VIRTUAL_ENV"
+else
+    echo "✗ ERROR: Failed to activate virtual environment"
+    exit 1
+fi
+
 pip install --upgrade pip
 
 echo ""
-echo "Step 5: Installing Python packages from requirements_pi.txt..."
+echo "Step 5: Installing Python packages into venv..."
+echo "Installing to: $(which python)"
 pip install -r requirements_pi.txt
 
 echo ""
@@ -140,8 +150,8 @@ else
 fi
 
 echo ""
-echo "Step 8: Testing camera access..."
-${PYTHON_CMD} << EOF
+echo "Step 8: Testing camera access with venv Python..."
+${VENV_NAME}/bin/python << EOF
 import cv2
 import sys
 print("Attempting to open camera...")
