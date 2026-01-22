@@ -206,9 +206,10 @@ def capture_and_process():
     """Capture video frames and process them with Roboflow Workflow via Docker HTTP API."""
     global last_frame
 
-    # Initialize Inference HTTP Client (connects to Docker container)
+    # Initialize Inference HTTP Client (connects to Roboflow Cloud)
+    # Use cloud API instead of local Docker for Workflow support
     client = InferenceHTTPClient(
-        api_url=os.environ.get("INFERENCE_SERVER_URL", "http://localhost:9001"),
+        api_url="https://detect.roboflow.com",
         api_key=os.environ.get("ROBOFLOW_API_KEY")
     )
 
@@ -220,7 +221,7 @@ def capture_and_process():
         return
 
     print("✓ Webcam opened successfully")
-    print(f"✓ Connected to Inference Server at {os.environ.get('INFERENCE_SERVER_URL', 'http://localhost:9001')}")
+    print("✓ Connected to Roboflow Cloud Inference (https://detect.roboflow.com)")
 
     frame_count = 0
     fps_limit = 5  # Process 5 frames per second
@@ -325,14 +326,11 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     print("=" * 60)
-    print("Raspberry Pi 4 Milk Bottle Monitoring System (Docker)")
+    print("Raspberry Pi 4 Milk Bottle Monitoring System")
     print("=" * 60)
     print("")
-    print("Requirements:")
-    print("  1. Docker must be running")
-    print("  2. Roboflow Inference Server must be running:")
-    print("     sudo docker run -d -p 9001:9001 \\")
-    print("       roboflow/roboflow-inference-server-arm-cpu")
+    print("Using Roboflow Cloud Workflows")
+    print("No local Docker container needed")
     print("")
     print("Starting camera capture and processing...")
 
