@@ -107,7 +107,8 @@ fi
 
 echo ""
 echo "Step 5: Reinstalling opencv-python-headless..."
-pip install --no-cache-dir --extra-index-url https://www.piwheels.org/simple opencv-python-headless
+# Pin numpy to 1.x to avoid numpy 2.x compatibility issues
+pip install --no-cache-dir --extra-index-url https://www.piwheels.org/simple "opencv-python-headless<4.10" "numpy<2"
 
 echo ""
 echo "Step 6: Reinstalling inference package..."
