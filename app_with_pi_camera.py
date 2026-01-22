@@ -20,7 +20,7 @@ import requests
 load_dotenv("config.env")
 
 # Configuration
-PI_CAMERA_URL = os.environ.get("PI_CAMERA_URL", "http://edsspi3.local:8080/video_feed")
+PI_CAMERA_URL = os.environ.get("PI_CAMERA_URL", "http://edsspi3.local:8888/video_feed")
 
 # Initialize Flask app
 app = Flask(__name__)

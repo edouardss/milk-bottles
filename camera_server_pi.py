@@ -72,7 +72,7 @@ def index():
         <h2>Camera Feed:</h2>
         <img src="/video_feed" style="max-width: 100%; border: 2px solid #333;">
         <hr>
-        <p>Use this URL in your Mac application: <code>http://{os.popen('hostname -I').read().strip().split()[0]}:8080/video_feed</code></p>
+        <p>Use this URL in your Mac application: <code>http://{os.popen('hostname -I').read().strip().split()[0]}:8888/video_feed</code></p>
     </body>
     </html>
     """
@@ -93,8 +93,9 @@ if __name__ == '__main__':
     print("Raspberry Pi Camera Server")
     print("=" * 60)
     print("")
-    print("Starting server on port 8080...")
+    print("Starting server on port 8888...")
     print("This will stream camera feed to your Mac")
+    print("(Port 8080 is used by Viam)")
     print("")
     print("Access from your Mac at:")
 
@@ -103,13 +104,13 @@ if __name__ == '__main__':
     hostname = socket.gethostname()
     try:
         ip = socket.gethostbyname(hostname)
-        print(f"  http://{ip}:8080")
+        print(f"  http://{ip}:8888")
     except:
         pass
 
-    print(f"  http://edsspi3.local:8080")
+    print(f"  http://edsspi3.local:8888")
     print("")
     print("=" * 60)
 
     # Run Flask server
-    app.run(host='0.0.0.0', port=8080, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=8888, debug=False, threaded=True)
