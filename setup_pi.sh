@@ -52,8 +52,6 @@ sudo apt install -y \
     libgtk-3-dev \
     libcanberra-gtk3-module \
     libhdf5-dev \
-    libhdf5-serial-dev \
-    libjasper-dev \
     libqt5gui5 \
     libqt5webkit5 \
     libqt5test5 \
