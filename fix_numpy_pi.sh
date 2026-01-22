@@ -111,8 +111,15 @@ echo "Step 5: Reinstalling opencv-python-headless..."
 pip install --no-cache-dir --extra-index-url https://www.piwheels.org/simple "opencv-python-headless<4.10" "numpy<2"
 
 echo ""
-echo "Step 6: Reinstalling inference package..."
-pip install --no-cache-dir inference>=0.9.0
+echo "Step 6: Reinstalling inference package with numpy pinned..."
+# Install inference but prevent it from upgrading numpy
+pip install --no-cache-dir --no-deps inference>=0.9.0
+
+# Now install inference dependencies manually, keeping numpy<2
+pip install --no-cache-dir \
+    requests pillow pydantic python-dotenv \
+    supervision supervision \
+    "numpy<2"
 
 echo ""
 echo "Step 7: Testing full import chain..."
