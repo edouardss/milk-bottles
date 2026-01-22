@@ -11,10 +11,10 @@ echo "======================================================"
 echo ""
 
 # Configuration
-PI_HOST="edsspi.local"
+PI_HOST="edsspi3.local"
 PI_USER="edss"
 PROJECT_DIR="milk-bottles"
-REPO_URL="git@github.com:edouardss/milk-bottles.git"
+REPO_URL="https://github.com/edouardss/milk-bottles.git"
 VENV_NAME="venv"
 
 echo "Configuration:"
@@ -57,8 +57,8 @@ else
         echo ""
         echo "Troubleshooting:"
         echo "  1. Make sure Git is installed on Pi: sudo apt install git"
-        echo "  2. Make sure SSH keys are set up for GitHub on Pi"
-        echo "  3. Or use HTTPS: ${REPO_URL//git@github.com:/https://github.com/}"
+        echo "  2. Check network connection on Pi"
+        echo "  3. Verify repository URL: ${REPO_URL}"
         exit 1
     fi
 fi

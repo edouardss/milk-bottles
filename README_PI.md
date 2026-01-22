@@ -52,7 +52,7 @@ ssh edss@edsspi.local
 ### 2. Clone Repository
 ```bash
 cd ~
-git clone git@github.com:edouardss/milk-bottles.git
+git clone https://github.com/edouardss/milk-bottles.git
 cd milk-bottles
 ```
 
