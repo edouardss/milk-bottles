@@ -35,7 +35,8 @@ echo ""
 echo "Step 3: Installing numpy from piwheels (ARM-optimized)..."
 # piwheels.org provides pre-compiled packages specifically for Raspberry Pi
 # These are built without advanced CPU instructions that cause "Illegal instruction"
-pip install --no-cache-dir --index-url https://www.piwheels.org/simple numpy
+# Use piwheels as extra index (fallback to PyPI if needed)
+pip install --no-cache-dir --extra-index-url https://www.piwheels.org/simple numpy==1.26.4
 
 echo ""
 echo "Step 4: Testing numpy..."
@@ -106,7 +107,7 @@ fi
 
 echo ""
 echo "Step 5: Reinstalling opencv-python-headless..."
-pip install --no-cache-dir --index-url https://www.piwheels.org/simple opencv-python-headless
+pip install --no-cache-dir --extra-index-url https://www.piwheels.org/simple opencv-python-headless
 
 echo ""
 echo "Step 6: Reinstalling inference package..."
