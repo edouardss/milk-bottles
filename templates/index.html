@@ -235,6 +235,20 @@
                 <span class="status-indicator"></span>
                 <strong>Live Stream Active</strong>
             </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Whole Milk</h3>
+                    <div class="value" id="video-whole">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>1% Milk</h3>
+                    <div class="value" id="video-1pct">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>2% Milk</h3>
+                    <div class="value" id="video-2pct">0</div>
+                </div>
+            </div>
             <div id="video-container">
                 <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Live Video Feed">
             </div>
@@ -416,6 +430,17 @@
         socket.on('graph_update', function(data) {
             console.log('Graph update received:', data);
             updateGraph(data);
+
+            // Also update video tab counts
+            if (data.whole.length > 0) {
+                document.getElementById('video-whole').textContent = data.whole[data.whole.length - 1];
+            }
+            if (data['1pct'].length > 0) {
+                document.getElementById('video-1pct').textContent = data['1pct'][data['1pct'].length - 1];
+            }
+            if (data['2pct'].length > 0) {
+                document.getElementById('video-2pct').textContent = data['2pct'][data['2pct'].length - 1];
+            }
         });
 
         socket.on('alerts_initial', function(data) {
