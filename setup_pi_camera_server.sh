@@ -70,8 +70,8 @@ echo "To start the camera server:"
 echo "  source venv_camera/bin/activate"
 echo "  python camera_server_pi.py"
 echo ""
-echo "The server will run on port 8080"
-echo "Your Mac will connect to: http://edsspi3.local:8080/video_feed"
+echo "The server will run on port 8888"
+echo "Your Mac will connect to: http://edsspi3.local:8888/video_feed"
 echo ""
 
 deactivate 2>/dev/null || true
