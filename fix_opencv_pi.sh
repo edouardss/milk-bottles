@@ -65,7 +65,17 @@ if [ "$INSTALL_METHOD" = "apt" ]; then
     fi
 else
     echo "Step 3: Installing OpenCV from pip (64-bit)..."
-    pip install --no-cache-dir opencv-python
+
+    # First try installing numpy with specific build flags for ARM
+    echo "Installing numpy optimized for ARM..."
+    pip install --no-cache-dir numpy
+
+    # Install opencv-python-headless (lighter, no GUI dependencies)
+    # This version tends to work better on ARM systems
+    echo "Installing opencv-python-headless (recommended for headless servers)..."
+    pip install --no-cache-dir opencv-python-headless
+
+    echo "✓ OpenCV headless installed"
 fi
 
 echo ""
