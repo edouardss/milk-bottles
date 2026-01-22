@@ -184,39 +184,6 @@ def my_sink(result, video_frame):
 
             last_save_time = current_time
 
-        # Draw count box in top-left corner
-        box_x, box_y = 10, 10
-        box_width = 250
-        line_height = 35
-        padding = 15
-
-        # Calculate box height based on number of categories
-        num_lines = 3  # whole, 1pct, 2pct
-        box_height = padding * 2 + line_height * num_lines
-
-        # Draw semi-transparent background for counts
-        overlay = display_image.copy()
-        cv2.rectangle(overlay, (box_x, box_y), (box_x + box_width, box_y + box_height), (0, 0, 0), -1)
-        cv2.addWeighted(overlay, 0.7, display_image, 0.3, 0, display_image)
-
-        # Draw border
-        cv2.rectangle(display_image, (box_x, box_y), (box_x + box_width, box_y + box_height), (255, 255, 255), 2)
-
-        # Display counts
-        y_offset = box_y + padding + 25
-        categories = [
-            ("whole", "Whole Milk"),
-            ("1pct", "1% Milk"),
-            ("2pct", "2% Milk")
-        ]
-
-        for category_id, category_name in categories:
-            count = counts.get(category_id, 0)
-            text = f"{category_name}: {count}"
-            cv2.putText(display_image, text, (box_x + padding, y_offset),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-            y_offset += line_height
-
         # Display missing categories alert if any
         if missing:
             img_height = display_image.shape[0]
