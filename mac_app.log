@@ -1,0 +1,60 @@
+ModelDependencyMissing: Your `inference` configuration does not support Qwen2.5-VL model. Use pip install 'inference[transformers]' to install missing requirements.To suppress this warning, set QWEN_2_5_ENABLED to False.
+ModelDependencyMissing: Your `inference` configuration does not support Qwen3-VL model. Use pip install 'inference[transformers]' to install missing requirements.To suppress this warning, set QWEN_3_ENABLED to False.
+ModelDependencyMissing: Your `inference` configuration does not support SAM model. Use pip install 'inference[sam]' to install missing requirements.To suppress this warning, set CORE_MODEL_SAM_ENABLED to False.
+ModelDependencyMissing: Your `inference` configuration does not support SAM3 model. Install SAM3 dependencies and set CORE_MODEL_SAM3_ENABLED to True.
+ModelDependencyMissing: Your `inference` configuration does not support Gaze Detection model. Use pip install 'inference[gaze]' to install missing requirements.To suppress this warning, set CORE_MODEL_GAZE_ENABLED to False.
+FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+ModelDependencyMissing: Your `inference` configuration does not support YoloWorld model. Use pip install 'inference[yolo-world]' to install missing requirements.To suppress this warning, set CORE_MODEL_YOLO_WORLD_ENABLED to False.
+InferenceExperimentalFeatureWarning: init_with_workflow is experimental: Usage of workflows with `InferencePipeline` is an experimental feature. Please report any issues here: https://github.com/roboflow/inference/issues
+WARNING:werkzeug:Werkzeug appears to be used in a production deployment. Consider switching to a production web server instead.
+============================================================
+Milk Bottle Monitoring System (Mac + Pi Camera)
+============================================================
+
+Testing connection to Pi camera...
+✓ Pi camera accessible at http://192.168.1.130:8888/video_feed
+
+Initializing pipeline with Roboflow cloud inference...
+Camera: Raspberry Pi at http://192.168.1.130:8888/video_feed
+Inference: Roboflow serverless cloud (running on Mac)
+Flask server starting...
+Access the application at:
+  - http://localhost:5050
+  - http://127.0.0.1:5050
+============================================================
+ * Serving Flask app 'app_with_pi_camera'
+ * Debug mode: off
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5050
+ * Running on http://192.168.1.166:5050
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+UserWarning: Field name "schema" in "WorkflowsBlocksSchemaDescription" shadows an attribute in parent "BaseModel"
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:11] "GET /socket.io/?EIO=4&transport=polling&t=PlaNJ6h HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:11] "POST /socket.io/?EIO=4&transport=polling&t=PlaNJ7S&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:11] "GET /socket.io/?EIO=4&transport=polling&t=PlaNJ7U&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+Pipeline initialized. Starting video stream from Pi...
+Client connected
+Resolved model_id: milk-detector-lkq28/3, dataset_id: milk-detector-lkq28, version_id: 3
+[01/22/26 01:21:12] WARNING  Unsupported resize method 'Fit      roboflow.py:460
+                             within', defaulting to 'Fit (black                 
+                             edges) in' - this may result in                    
+                             degraded model performance.                        
+UserWarning: Specified provider 'CUDAExecutionProvider' is not in available provider names.Available providers: 'CoreMLExecutionProvider, AzureExecutionProvider, CPUExecutionProvider'
+UserWarning: Specified provider 'OpenVINOExecutionProvider' is not in available provider names.Available providers: 'CoreMLExecutionProvider, AzureExecutionProvider, CPUExecutionProvider'
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:13] "GET /socket.io/?EIO=4&transport=polling&t=PlaNJ7d&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:19] "GET /socket.io/?EIO=4&transport=polling&t=PlaNJjj&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:21] "GET /socket.io/?EIO=4&transport=polling&t=PlaNKz8&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:24] "GET /socket.io/?EIO=4&transport=polling&t=PlaNLaI&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:29] "GET /socket.io/?EIO=4&transport=polling&t=PlaNMBr&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:34] "GET /socket.io/?EIO=4&transport=polling&t=PlaNNRK&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET /socket.io/?EIO=4&transport=polling&t=PlaNOta HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET /video_feed HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "[33mGET /graph_data HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "[33mGET /alerts HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "POST /socket.io/?EIO=4&transport=polling&t=PlaNOtv&sid=VqcK5GeZvVb7en60AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET /socket.io/?EIO=4&transport=polling&t=PlaNOtv.0&sid=VqcK5GeZvVb7en60AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET /socket.io/?EIO=4&transport=polling&t=PlaNOuK&sid=VqcK5GeZvVb7en60AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:35] "GET /socket.io/?EIO=4&transport=polling&t=PlaNOuY&sid=VqcK5GeZvVb7en60AAAC HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jan/2026 01:21:36] "GET /socket.io/?EIO=4&transport=polling&t=PlaNOhE&sid=WmFSmhvYDrXVkR37AAAA HTTP/1.1" 200 -

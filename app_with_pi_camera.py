@@ -20,7 +20,7 @@ import requests
 load_dotenv("config.env")
 
 # Configuration
-PI_CAMERA_URL = os.environ.get("PI_CAMERA_URL", "http://edsspi3.local:8888/video_feed")
+PI_CAMERA_URL = os.environ.get("PI_CAMERA_URL", "http://100.108.134.110:8888/video_feed")
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -35,7 +35,7 @@ last_frame = None
 frame_lock = Lock()
 
 # Alert cooldown period (in seconds)
-ALERT_COOLDOWN_SECONDS = 500
+ALERT_COOLDOWN_SECONDS = 10
 
 # Data storage for plotting (in-memory for past hour)
 data_history = {
@@ -216,6 +216,39 @@ def my_sink(result, video_frame):
             cv2.putText(display_image, text, (box_x + padding, y_offset),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             y_offset += line_height
+
+        # Display missing categories alert if any
+        if missing:
+            img_height = display_image.shape[0]
+            alert_height = 80
+            alert_y = img_height - alert_height - 20
+            alert_x = 10
+            alert_width = display_image.shape[1] - 20
+
+            # Draw red alert box
+            overlay = display_image.copy()
+            cv2.rectangle(overlay, (alert_x, alert_y), (alert_x + alert_width, alert_y + alert_height), (0, 0, 200), -1)
+            cv2.addWeighted(overlay, 0.8, display_image, 0.2, 0, display_image)
+
+            # Draw border
+            cv2.rectangle(display_image, (alert_x, alert_y), (alert_x + alert_width, alert_y + alert_height), (0, 0, 255), 3)
+
+            # Format missing categories
+            category_names = {
+                "whole": "Whole Milk",
+                "1pct": "1% Milk",
+                "2pct": "2% Milk"
+            }
+            missing_names = [category_names.get(m, m) for m in missing]
+            missing_text = ", ".join(missing_names)
+
+            # Draw "MISSING:" label
+            cv2.putText(display_image, "MISSING:", (alert_x + 20, alert_y + 35),
+                       cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
+
+            # Draw missing category names
+            cv2.putText(display_image, missing_text, (alert_x + 20, alert_y + 65),
+                       cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
 
         # Update last frame for MJPEG stream
         with frame_lock:
