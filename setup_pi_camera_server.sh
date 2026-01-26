@@ -72,6 +72,7 @@ echo "  python camera_server_pi.py"
 echo ""
 echo "The server will run on port 8888"
 echo "Your Mac will connect to: http://edsspi3.local:8888/video_feed"
+echo "or http://100.108.134.110:8888/video_feed"
 echo ""
 
 deactivate 2>/dev/null || true
