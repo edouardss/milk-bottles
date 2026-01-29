@@ -359,7 +359,10 @@
                 },
                 yaxis: {
                     title: 'Count',
-                    rangemode: 'tozero'
+                    range: [0, 2],
+                    fixedrange: false,
+                    tickmode: 'array',
+                    tickvals: [0, 1, 2]
                 },
                 showlegend: true,
                 legend: {
@@ -555,13 +558,13 @@
         initGraph();
 
         // Load initial graph data
-        fetch('/graph_data')
+        fetch('/api/data')
             .then(response => response.json())
             .then(data => updateGraph(data))
             .catch(error => console.error('Error loading graph data:', error));
 
         // Load initial alerts data
-        fetch('/alerts')
+        fetch('/api/alerts')
             .then(response => response.json())
             .then(data => updateAlertsTable(data))
             .catch(error => console.error('Error loading alerts data:', error));

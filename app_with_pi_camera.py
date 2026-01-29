@@ -37,6 +37,11 @@ frame_lock = Lock()
 # Alert cooldown period (in seconds)
 ALERT_COOLDOWN_SECONDS = 10
 
+# FPS tracking
+frame_count = 0
+fps_start_time = time.time()
+last_fps_print = time.time()
+
 # Data storage for plotting (in-memory for past hour)
 data_history = {
     "whole": [],
@@ -113,7 +118,16 @@ def get_graph_data():
 
 def my_sink(result, video_frame):
     """Process predictions from Roboflow workflow."""
-    global last_save_time, last_frame, timestamps, last_alert_time
+    global last_save_time, last_frame, timestamps, last_alert_time, frame_count, fps_start_time, last_fps_print
+
+    # Track FPS
+    frame_count += 1
+    current_time = time.time()
+    if current_time - last_fps_print >= 5.0:  # Print FPS every 5 seconds
+        elapsed = current_time - fps_start_time
+        fps = frame_count / elapsed
+        print(f"Processing FPS: {fps:.2f} ({frame_count} frames in {elapsed:.1f}s)", flush=True)
+        last_fps_print = current_time
 
     if result.get("annotated_image"):
         # Get the annotated image
