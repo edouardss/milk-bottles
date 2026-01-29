@@ -98,6 +98,9 @@ def main():
 
         # Stream frames
         for frame in decode_mjpeg_stream(PI_CAMERA_URL):
+            # Keep a clean copy for saving
+            clean_frame = frame.copy()
+
             # Verify resolution on first frame
             height, width = frame.shape[:2]
             if not resolution_verified:
@@ -110,7 +113,7 @@ def main():
                     print(f"  Update camera_server_pi.py to match!")
                 resolution_verified = True
 
-            # Add instruction overlay
+            # Add instruction overlay (on display copy, not clean_frame)
             overlay = frame.copy()
 
             # Semi-transparent bar at top
@@ -121,7 +124,7 @@ def main():
             cv2.putText(frame, f"Snapshots: {snapshot_count} | Press SPACEBAR to capture | Q to quit",
                        (10, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
-            # Display frame
+            # Display frame with overlay
             cv2.imshow('Pi Camera - Press SPACEBAR to capture', frame)
 
             # Wait for key press (1ms to keep stream smooth)
@@ -133,19 +136,16 @@ def main():
                 filename = f"snapshot_{timestamp}.jpg"
                 filepath = os.path.join(SNAPSHOTS_DIR, filename)
 
-                # Save the frame (without overlay)
-                # Get clean frame by re-reading
-                for clean_frame in decode_mjpeg_stream(PI_CAMERA_URL):
-                    cv2.imwrite(filepath, clean_frame)
-                    snapshot_count += 1
-                    print(f"✓ Saved: {filename}")
+                # Save the clean frame (without overlay)
+                cv2.imwrite(filepath, clean_frame)
+                snapshot_count += 1
+                print(f"✓ Saved: {filename}")
 
-                    # Show visual feedback
-                    flash = clean_frame.copy()
-                    cv2.rectangle(flash, (0, 0), (width, height), (255, 255, 255), 30)
-                    cv2.imshow('Pi Camera - Press SPACEBAR to capture', flash)
-                    cv2.waitKey(100)  # Brief flash
-                    break
+                # Show visual feedback (white flash)
+                flash = frame.copy()
+                cv2.rectangle(flash, (0, 0), (width, height), (255, 255, 255), 30)
+                cv2.imshow('Pi Camera - Press SPACEBAR to capture', flash)
+                cv2.waitKey(100)  # Brief flash
 
             elif key == ord('q') or key == ord('Q'):  # Q to quit
                 print("")
